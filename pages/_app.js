@@ -1,15 +1,10 @@
-import NavBar from "../components/NavBar";
+import Layout from "../components/Layout";
 import "../styles/globals.css";
 
 export default function App({ Component, pageProps }) {
   return (
-    <div>
-         <NavBar></NavBar>
+      <Layout>
       <Component {...pageProps} />
-      <span> the global</span>
-      <style jsx>{`
-        font-size: 20px;
-      `}</style>
-    </div>
+      </Layout>
   );
 }
