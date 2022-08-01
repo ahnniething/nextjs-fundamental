@@ -1,29 +1,24 @@
-
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import Seo from "../components/Seo";
+import  Link  from 'next/link';
+import { useRouter } from 'next/router';
 
-export default function Home() {
-  const [movies, setMovies] = useState([]);
-  useEffect(() => {
-    (async () => {
-      const { results } = await (
-        await fetch(
-          `/api/movies`
-        )
-      ).json();
-      setMovies(results);
-    })();
-  }, []);
+export default function Home({results}) {
+  const router = useRouter();
+  const onClick = (id) => {
+    router.push(`/movies/${id}`);
+  }
   return (
     <div className="container">
       <Seo title="Home" />
-      {!movies && <h4>Loading...</h4>}
-      {movies?.map((movie) => (
-        <div className="movie" key={movie.id}>
-          <img src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`} />
-          <h4>{movie.original_title}</h4>
+      {results?.map((movie) => (
+
+          <div onClick={()=>onClick(movie.id)} className="movie" key={movie.id}>
+          <img src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} />
+          <h4> <Link href={`/movies/${movie.id}`}>{movie.original_title}</Link></h4>
         </div>
+
       ))}
       <style jsx>{`
         .container {
@@ -31,6 +26,9 @@ export default function Home() {
           grid-template-columns: 1fr 1fr;
           padding: 20px;
           gap: 20px;
+        }
+        .movie{
+          cursor: pointer;
         }
         .movie img {
           max-width: 100%;
@@ -48,4 +46,16 @@ export default function Home() {
       `}</style>
     </div>
   );
+}
+
+//서버에서 실행되는 함수
+//클라이언트에서 접근 불가한 소스이므로 여기에 API key를 숨길 수도 있다.
+//직접호출하지 않아도 알아서 실행됨
+//API가 리턴되기 전까지 화면에 아무것도 안 보일 것
+export async function getServerSideProps() {
+  //`/api/movies`는 프론트엔드에서만 작동하는 주소임
+  const { results } = await (await fetch(`http://localhost:3000/api/movies`)).json();
+  return {
+    props: { results }
+  };
 }
