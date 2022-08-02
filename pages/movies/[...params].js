@@ -1,10 +1,11 @@
 import { useRouter } from 'next/router';
-export default function Detail(){
+import Seo from "../../components/Seo";
 
- const router = useRouter();
-const [title, id] = router.query.params || [];
+export default function Detail({params}){
+const [title, id] = params || [];
  return (
     <div>
+      <Seo title={title} />
       <h4>{title}</h4>
     </div>
   );
